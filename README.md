@@ -12,7 +12,7 @@ Local Weather RSS Sensor for Home Assistant<br>
 <br><br>
 ## Usage
 ### configuration
-- HA 설정에 lotto645 sensor를 추가합니다.<br>
+- HA 설정에 Local Weather RSS sensor를 추가합니다.<br>
 ```yaml
 sensor:
   - platform: local_weather_rss
