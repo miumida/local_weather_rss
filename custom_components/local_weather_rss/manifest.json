@@ -1,0 +1,10 @@
+{
+  "domain": "local_weather_rss",
+  "name": "local_weahther_rss",
+  "documentation": "https://github.com/miumida/local_weather_rss",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [
+    "@miumida"
+  ]
+}
