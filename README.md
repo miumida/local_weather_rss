@@ -33,6 +33,8 @@ sensor:
   RSS 주소(`http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=1159068000`)에 포함된 숫자(**1159068000**)가 지역코드.<br>
 ![kma_rss_service](https://github.com/miumida/local_weather_rss/blob/master/kma_rss_service.png)<br>
 <br><br>
+## History
+<br><br>
 ## 참조 링크
 [1] 기상청 RSS 서비스 : <https://web.kma.go.kr/weather/lifenindustry/sevice_rss.jsp><br>
 [2] 기상청 동네예보 XML 정보 : <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>
