@@ -24,7 +24,7 @@ sensor:
 <br><br>
 ### 지역코드(localcode)
 - 기상청 RSS 서비스로 접속하여 원하는 지역의 선택하여 지역코드를 찾습니다.
-  `http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=**1159068000**`
+  `http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=`__1159068000__
 <br><br>
 ## 참조 링크
 [1] 기상청 RSS 서비스 : <https://web.kma.go.kr/weather/lifenindustry/sevice_rss.jsp><br>
