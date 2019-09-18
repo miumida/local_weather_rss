@@ -1,6 +1,7 @@
 # Local Weather RSS Sensor (기상청 동네예보 RSS)
 Local Weather RSS Sensor for Home Assistant<br>
 기상청 동네예보 RSS를 활용한 Home Assistant Sensor 입니다.<br>
+- 두가지 형태의 센서가 생성됩니다.(동네예보RSS + 동네예보RSS속성)<br>
 <br>
 ![screenshot_1](https://github.com/miumida/local_weather_rss/blob/master/local_weather_rss_screenshot_1.png)<br>
 ![screenshot_2](https://github.com/miumida/local_weather_rss/blob/master/local_weather_rss_screenshot_2.png)<br>
