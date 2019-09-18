@@ -23,4 +23,5 @@ sensor:
 ```
 <br><br>
 ## 참조 링크
-[기상청 동네예보 XML 정보] <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>
+[1] 기상청 RSS 서비스 : <https://web.kma.go.kr/weather/lifenindustry/sevice_rss.jsp>
+[2] 기상청 동네예보 XML 정보 : <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>
