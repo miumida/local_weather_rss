@@ -26,7 +26,7 @@ sensor:
 - 기상청 RSS 서비스로 접속하여 원하는 지역의 선택하여 지역코드를 찾습니다.<br>
 ![kma_rss_service](https://github.com/miumida/local_weather_rss/blob/master/kma_rss_service.png)<br>
   `http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=1159068000` 와 같은 RSS 주소가 나옵니다.<br>
-  주소에 포함된 __1159068000__이 지역코드입니다.
+  주소에 포함된 숫자(**1159068000**)가 지역코드입니다.
 <br><br>
 ## 참조 링크
 [1] 기상청 RSS 서비스 : <https://web.kma.go.kr/weather/lifenindustry/sevice_rss.jsp><br>
