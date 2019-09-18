@@ -22,5 +22,5 @@ sensor:
     localcode: 지역코드
 ```
 <br><br>
-## 참고정보
-[기상청 동네예보 XML 정보](http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf)
+## 참조 링크
+[기상청 동네예보 XML 정보] <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>
