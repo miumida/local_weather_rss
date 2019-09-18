@@ -37,5 +37,5 @@ sensor:
 <br><br>
 ## 참조 링크
 [1] 기상청 RSS 서비스 : <https://web.kma.go.kr/weather/lifenindustry/sevice_rss.jsp><br>
-[2] 기상청 동네예보 XML 정보 : <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>
+~~[2] 기상청 동네예보 XML 정보 : <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>~~<br>
 [3] 기상청 동네예보 RSS 정의 : <https://web.kma.go.kr/images/weather/lifenindustry/dongnaeforecast_rss.pdf>
