@@ -23,19 +23,22 @@ KMA_BSE_URL = 'http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone={}'
 _WEATHER_PROPERTIES = {
   'PUB_DATE': ['public_date', None, 'mdi:clock-outline'],
   'CATEGORY': ['location', None, 'mdi:map-marker'],
-  'DAY': ['day', None, 'mdi:clock-outline'],
+  'DAY': ['day', None, 'mdi:calendar-today'],
 	'HOUR': ['hour', 'h', 'mdi:clock-outline'],
 	'REH': ['humidity', '%', 'mdi:water-percent'],
 	'R03': ['rain_prediction_3h', 'mm', 'mdi:water'],
-	'R06': ['rain_prediction_6h', 'mm', 'mdi:water'],
   'R06H': ['rain_perdiction_6h', 'mm', 'mdi:water'],
 	'R12H': ['rain_prediction_12h', 'mm', 'mdi:water'],
 	'POP': ['rain_percent', '%', 'mdi:water-percent'],
-	'S06': ['snow_prediction_6h', 'cm', 'mdi:snowflake'],
+  'S03': ['snow_prediction_3h','cm','mdi:snowflake'],
+	'S06H': ['snow_prediction_6h', 'cm', 'mdi:snowflake'],
+  'S12H': ['snow_prediction_12h', 'cm', 'mdi:snowflake'],
 	'TEMP': ['temperature', '°C', 'mdi:thermometer'],
 	'TMX': ['temperature_max', '°C', 'mdi:thermometer'],
 	'TMN': ['temperature_min', '°C', 'mdi:thermometer'],
   'WFKOR': ['weather_forecast', None, None],
+  'WS': ['wind_speed', 'm/s', 'mdi:weather-windy'],
+  'WDKOR': ['wind_direction', None, 'mdi:weather-windy'],
 }
 
 _WEATHER_DAY = {
@@ -43,6 +46,11 @@ _WEATHER_DAY = {
   '1': '내일',
   '2': '모레',
 }
+
+FORMAT_TEMP = '{} °C'
+FORMAT_PERCENT = '{} %'
+FORMAT_MM = '{} mm'
+FORMAT_CM = '{} cm'
 
 DEFAULT_NAME = 'local_weather_rss'
 DEFAULT_ICON = 'mdi:weather-partlycloudy'
@@ -135,6 +143,10 @@ class RSSWeatherAPI:
             rain_accu_6h  = 0
             rain_accu_12h = 0
 
+            # S06/2로 계산한 S03을 누적해서 계산하기 위한 변수 초기화
+            snow_accu_6h  = 0
+            snow_accu_12h = 0
+
             for element in root.getiterator("data"):
                 seq = element.attrib['seq']
 
@@ -152,8 +164,10 @@ class RSSWeatherAPI:
                 ATTR_WFKOR = element.findtext('wfKor')
                 ATTR_WFEN = element.findtext('wfEn')
                 ATTR_POP = element.findtext('pop')
+
                 ATTR_R12 = element.findtext('r12')
                 ATTR_S12 = element.findtext('s12')
+
                 ATTR_WS = element.findtext('ws')
                 ATTR_WD = element.findtext('wd')
                 ATTR_WDKOR = element.findtext('wdKor')
@@ -162,46 +176,61 @@ class RSSWeatherAPI:
                 ATTR_R06 = element.findtext('r06')
                 ATTR_S06 = element.findtext('s06')
 
-                # 6시간 예상강우량이기 때문에 2로 나눠서 3시간 예상강수량을 계산
+                # 6시간 예상강우량/적설량이기 때문에 2로 나눠서 3시간 예상강수량/적설량을 계산
                 ATTR_R03 = 0.0 if float(ATTR_R06) == 0 else float(ATTR_R06)/2
+                ATTR_S03 = 0.0 if float(ATTR_S06) == 0 else float(ATTR_S06)/2
 
-                # 6시간 강수량을 눚거해서 6시간 예상강수량 계산
+                # 6시간 강수량/적설량을 누해적서 6시간 예상강수량/적설량 계산
                 if int(seq) < 3:
-                    rain_accu_6h = rain_accu_6h + ATTR_R03
+                    rain_accu_6h += ATTR_R03
+                    snow_accu_6h += ATTR_S03
 
-                # 3시간 강수량을 누적해서 12시간 예상강수량 계산
-                rain_accu_12h = rain_accu_12h + ATTR_R03
+                # 3시간 강수량/적설량을 누적해서 12시간 예상강수량/적설량 계산
+                rain_accu_12h += ATTR_R03
+                snow_accu_12h += ATTR_S03
 
                 # 최근 1건에 대한 동네예보를 기준으로 표시
                 if seq == '0':
                     dictBuf['HOUR'] = ATTR_HOUR
                     dictBuf['DAY'] = ATTR_DAY
-                    dictBuf['TEMP'] = ATTR_TEMP
 
+                    dictBuf['TEMP'] = ATTR_TEMP
                     dictBuf['TMX'] = ATTR_TMX
                     dictBuf['TMN'] = ATTR_TMN
                     dictBuf['SKY'] = ATTR_SKY
                     dictBuf['PTY'] = ATTR_PTY
+
                     dictBuf['WFKOR'] = ATTR_WFKOR
-                    dictBuf['WFEN'] = ATTR_WFEN
-                    dictBuf['POP'] = ATTR_POP
-                    #dictBuf['R12'] = ATTR_R12
-                    #dictBuf['S12'] = ATTR_S12
-                    dictBuf['WS'] = ATTR_WS
-                    dictBuf['WD'] = ATTR_WD
+                    dictBuf['WFEN']  = ATTR_WFEN
+
+                    dictBuf['POP']   = ATTR_POP
+                    dictBuf['WS']    = '{:.1f}'.format(float(ATTR_WS))
+                    dictBuf['WD']    = ATTR_WD
                     dictBuf['WDKOR'] = ATTR_WDKOR
-                    dictBuf['WDEN'] = ATTR_WDEN
+                    dictBuf['WDEN']  = ATTR_WDEN
+
                     dictBuf['REH'] = ATTR_REH
                     dictBuf['R06'] = ATTR_R06
                     dictBuf['S06'] = ATTR_S06
                     dictBuf['R03'] = ATTR_R03
+                    dictBuf['S03'] = ATTR_S03
 
                     dictBuf['CATEGORY'] = category
                     dictBuf['PUB_DATE'] = pubDate
 
+										# -999 인 경우, 이전에 가지고 있던 값을 유지
+                    if ATTR_TMX == '-999.0':
+                        dictBuf['TMX'] = self.result.get('TMX', ATTR_TMX)
+
+                    if ATTR_TMN == '-999.0':
+                        dictBuf['TMN'] = self.result.get('TMN', ATTR_TMN)
+
             #R06/2로 계산하여 누적한 예상 강수량 추가(6H, 12H)
             dictBuf['R06H'] = rain_accu_6h
             dictBuf['R12H'] = rain_accu_12h
+            #S06/2로 계산하여 누적한 예상 적설량 추가(6H, 12H)
+            dictBuf['S06H'] = snow_accu_6h
+            dictBuf['S12H'] = snow_accu_12h
 
             self.result = dictBuf
             #_LOGGER.debug('RSS Weather API Request Result: %s', self.result)
@@ -258,7 +287,27 @@ class rssWeatherSensor(Entity):
     def device_state_attributes(self):
         """Attributes."""
 
-        dict = { 'public_date': self.data['PUB_DATE'], 'location': self.data['CATEGORY'], 'day': _WEATHER_DAY[self.data['DAY']], 'hour': '{} h'.format(self.data['HOUR']), 'temperature': '{} °C'.format(self.data['TEMP']), 'temperature_max': self.data['TMX'], 'temperature_min': self.data['TMN'], 'humidity': '{} %'.format(self.data['REH']), 'rain_percent': '{} %'.format(self.data['POP']), 'rain_prediction_3h': '{} mm'.format(self.data['R03']), 'rain_prediction_6h': '{} mm'.format(self.data['R06H']), 'rain_prediction_12h': '{} mm'.format(self.data['R12H'])  }
+        dict = { 'public_date': self.data['PUB_DATE']
+               , 'location'   : self.data['CATEGORY']
+               , 'day' : _WEATHER_DAY[self.data['DAY']]
+               , 'hour': '{} h'.format(self.data['HOUR'])
+               # 기온/습도
+               , 'temperature'    : FORMAT_TEMP.format(self.data['TEMP'])
+               , 'temperature_max': FORMAT_TEMP.format(self.data['TMX'])
+               , 'temperature_min': FORMAT_TEMP.format(self.data['TMN'])
+               , 'humidity': FORMAT_PERCENT.format(self.data['REH'])
+               # 강수확률/강수량/적설량
+               , 'rain_percent'       : FORMAT_PERCENT.format(self.data['POP'])
+               , 'rain_prediction_3h' : FORMAT_MM.format(self.data['R03'])
+               , 'rain_prediction_6h' : FORMAT_MM.format(self.data['R06H'])
+               , 'rain_prediction_12h': FORMAT_MM.format(self.data['R12H'])
+               , 'snow_prediction_3h' : FORMAT_CM.format(self.data['S03'])
+               , 'snow_prediction_6h' : FORMAT_CM.format(self.data['S06H'])
+               , 'snow_prediction_12h': FORMAT_CM.format(self.data['S12H'])
+               #바람 관련
+               , 'wind_speed'    : '{} m/s'.format(self.data['WS'])
+               , 'wind_direction': self.data['WDKOR'] }
+
         return dict
 
 # 날씨 속성 Sensor
