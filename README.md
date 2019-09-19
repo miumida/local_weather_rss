@@ -34,6 +34,11 @@ sensor:
 ![kma_rss_service](https://github.com/miumida/local_weather_rss/blob/master/kma_rss_service.png)<br>
 <br><br>
 ## History
+#####2019-09-19 수정사항
+- 최저/최대 기온 -999.0인 경우, 이전 값 유지하도록 수정<br>
+- 예상적설량 3h/6h/12h 추가(snow_prediction_3h/snow_prediction_6h/snow_prediction_12h)<br>
+- 풍속/풍향 추가(wind_speed/wind_direction)<br>
+- 기타 소소한 수정<br>
 <br><br>
 ## 참조 링크
 [1] 기상청 RSS 서비스 : <https://web.kma.go.kr/weather/lifenindustry/sevice_rss.jsp><br>
