@@ -35,7 +35,7 @@ sensor:
 <br><br>
 ## History
 ##### 2019-09-30 수정사항
-- mdi icon 변경 ( 0.98.1 이후 버전만 적용필요)<br>mdi:weather-partlycloudy -> mdi:weather-partly-cloudy<br>
+- 구름 조금/구름 많이 mdi icon 변경 ( 0.98.1 이후 버전만 적용필요)<br>mdi:weather-partlycloudy -> mdi:weather-partly-cloudy<br>
 ##### 2019-09-19 수정사항
 - 최저/최대 기온 -999.0인 경우, 이전 값 유지하도록 수정<br>
 - 예상적설량 3h/6h/12h 추가(snow_prediction_3h/snow_prediction_6h/snow_prediction_12h)<br>
