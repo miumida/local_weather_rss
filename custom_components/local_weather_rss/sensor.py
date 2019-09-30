@@ -92,9 +92,9 @@ def get_icon(wfcode):
     if wfcode == '맑음' or wfcode == 'Clear':
         return 'mdi:weather-sunny'
     if wfcode == '구름 조금' or wfcode == 'Partly Cloudy':
-        return 'mdi:weather-partlycloudy'
+        return 'mdi:weather-partly-cloudy'
     if wfcode == '구름 많음' or wfcode == 'Mostly Cloudy':
-        return 'mdi:weather-partlycloudy'
+        return 'mdi:weather-partly-cloudy'
     if wfcode == '흐림' or wfcode == 'Cloudy':
         return 'mdi:weather-cloudy'
     if wfcode == '비' or wfcode == 'Rain':
