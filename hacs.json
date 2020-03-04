@@ -1,5 +1,5 @@
 {
-  "name": "Local Weather RSS Hass.io Add-on",
-  "url": "https://github.com/miumida/local_weather_rss",
-  "maintainer": "miumida <miumida@gmail.com>"
+  "name": "Local Weather RSS Sensor",
+  "country": "KR",
+  "render_readme": true
 }
