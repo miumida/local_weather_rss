@@ -1,5 +1,6 @@
 {
-  "name": "Local Weather RSS Sensor",
+  "name": "[KR] Local Weather RSS Sensor",
   "country": "KR",
+  "domains": ["sensor"],  
   "render_readme": true
 }
