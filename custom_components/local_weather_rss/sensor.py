@@ -24,18 +24,18 @@ _WEATHER_PROPERTIES = {
   'PUB_DATE': ['public_date', None, 'mdi:clock-outline'],
   'CATEGORY': ['location', None, 'mdi:map-marker'],
   'DAY': ['day', None, 'mdi:calendar-today'],
-	'HOUR': ['hour', 'h', 'mdi:clock-outline'],
-	'REH': ['humidity', '%', 'mdi:water-percent'],
-	'R03': ['rain_prediction_3h', 'mm', 'mdi:water'],
+  'HOUR': ['hour', 'h', 'mdi:clock-outline'],
+  'REH': ['humidity', '%', 'mdi:water-percent'],
+  'R03': ['rain_prediction_3h', 'mm', 'mdi:water'],
   'R06H': ['rain_perdiction_6h', 'mm', 'mdi:water'],
-	'R12H': ['rain_prediction_12h', 'mm', 'mdi:water'],
-	'POP': ['rain_percent', '%', 'mdi:water-percent'],
+  'R12H': ['rain_prediction_12h', 'mm', 'mdi:water'],
+  'POP': ['rain_percent', '%', 'mdi:water-percent'],
   'S03': ['snow_prediction_3h','cm','mdi:snowflake'],
-	'S06H': ['snow_prediction_6h', 'cm', 'mdi:snowflake'],
+  'S06H': ['snow_prediction_6h', 'cm', 'mdi:snowflake'],
   'S12H': ['snow_prediction_12h', 'cm', 'mdi:snowflake'],
-	'TEMP': ['temperature', '°C', 'mdi:thermometer'],
-	'TMX': ['temperature_max', '°C', 'mdi:thermometer'],
-	'TMN': ['temperature_min', '°C', 'mdi:thermometer'],
+  'TEMP': ['temperature', '°C', 'mdi:thermometer'],
+  'TMX': ['temperature_max', '°C', 'mdi:thermometer'],
+  'TMN': ['temperature_min', '°C', 'mdi:thermometer'],
   'WFKOR': ['weather_forecast', None, None],
   'WS': ['wind_speed', 'm/s', 'mdi:weather-windy'],
   'WDKOR': ['wind_direction', None, 'mdi:weather-windy'],
@@ -124,7 +124,7 @@ class RSSWeatherAPI:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
 
-            page = response.content.decode('utf8')
+            page = response.content.decode('utf-8')
 
             root = xml.etree.ElementTree.fromstring(page)
 
@@ -218,7 +218,7 @@ class RSSWeatherAPI:
                     dictBuf['CATEGORY'] = category
                     dictBuf['PUB_DATE'] = pubDate
 
-										# -999 인 경우, 이전에 가지고 있던 값을 유지
+		    # -999 인 경우, 이전에 가지고 있던 값을 유지
                     if ATTR_TMX == '-999.0':
                         dictBuf['TMX'] = self.result.get('TMX', ATTR_TMX)
 
