@@ -1,6 +1,7 @@
 # Local Weather RSS Sensor (기상청 동네예보 RSS)
 
 ![HAKC][hakc-shield]
+![HACS][hacs-shield]
 ![Version v1.0.1][version-shield]
 
 Local Weather RSS Sensor for Home Assistant<br>
@@ -53,3 +54,4 @@ sensor:
 
 [version-shield]: https://img.shields.io/badge/version-v1.0.1-orange.svg
 [hakc-shield]: https://img.shields.io/badge/HAKC-Enjoy-blue.svg
+[hacs-shield]: https://img.shields.io/badge/HACS-Custom-red.svg
