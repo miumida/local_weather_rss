@@ -10,10 +10,9 @@ Local Weather RSS Sensor for Home Assistant<br>
 - 예상강수량(3h/6h/12h)은 R06/2로 3시간 단위의 예상강수량을 누적해서 R03, R06H, R12H로 제공합니다.<br>
 - 기상청 동네얘보 RSS는 02, 05, 08, 11, 14, 17, 20, 23시 (1일 8회)에 발표됩니다.<br>
 
-![screenshot_3](https://github.com/miumida/local_weather_rss/blob/master/local_weather_rss_screenshot_3.png)<br>
-![screenshot_1](https://github.com/miumida/local_weather_rss/blob/master/local_weather_rss_screenshot_1.png)<br>
-
-![screenshot_2](https://github.com/miumida/local_weather_rss/blob/master/local_weather_rss_screenshot_2.png)<br>
+![screenshot_1](https://github.com/miumida/local_weather_rss/blob/master/images/local_weather_rss_1.png)<br>
+![screenshot_2](https://github.com/miumida/local_weather_rss/blob/master/images/local_weather_rss_2.png)<br>
+![screenshot_3](https://github.com/miumida/local_weather_rss/blob/master/images/local_weather_rss_3.png)<br>
 <br><br>
 
 ## Version history
