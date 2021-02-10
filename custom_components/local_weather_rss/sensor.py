@@ -3,42 +3,46 @@ import requests
 import voluptuous as vol
 import xml.etree.ElementTree
 
+import async_timeout
+
 import homeassistant.helpers.config_validation as cv
 
 from datetime import timedelta
 from datetime import datetime
 from homeassistant.components.sensor import PLATFORM_SCHEMA
-from homeassistant.const import (CONF_NAME, CONF_API_KEY, CONF_ICON)
+from homeassistant.const import (CONF_NAME, HTTP_OK)
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import Throttle
+
+from .const import DOMAIN, MODEL, MANUFAC, SW_VERSION
 
 _LOGGER = logging.getLogger(__name__)
 
-CONF_NAME  = 'name'
 CONF_LOCAL_CODE = 'localcode'
-CONF_TYPE = 'type'
+CONF_PROP       = 'properties'
 
 KMA_BSE_URL = 'http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone={}'
 
 _WEATHER_PROPERTIES = {
-  'PUB_DATE': ['public_date', None, 'mdi:clock-outline'],
-  'CATEGORY': ['location', None, 'mdi:map-marker'],
-  'DAY': ['day', None, 'mdi:calendar-today'],
-  'HOUR': ['hour', 'h', 'mdi:clock-outline'],
-  'REH': ['humidity', '%', 'mdi:water-percent'],
-  'R03': ['rain_prediction_3h', 'mm', 'mdi:water'],
-  'R06H': ['rain_perdiction_6h', 'mm', 'mdi:water'],
-  'R12H': ['rain_prediction_12h', 'mm', 'mdi:water'],
-  'POP': ['rain_percent', '%', 'mdi:water-percent'],
-  'S03': ['snow_prediction_3h','cm','mdi:snowflake'],
-  'S06H': ['snow_prediction_6h', 'cm', 'mdi:snowflake'],
-  'S12H': ['snow_prediction_12h', 'cm', 'mdi:snowflake'],
-  'TEMP': ['temperature', '°C', 'mdi:thermometer'],
-  'TMX': ['temperature_max', '°C', 'mdi:thermometer'],
-  'TMN': ['temperature_min', '°C', 'mdi:thermometer'],
-  'WFKOR': ['weather_forecast', None, None],
-  'WS': ['wind_speed', 'm/s', 'mdi:weather-windy'],
-  'WDKOR': ['wind_direction', None, 'mdi:weather-windy'],
+  'PUB_DATE': ['Public Date', None, 'mdi:clock-outline'],
+  'CATEGORY': ['Location',    None, 'mdi:map-marker'],
+  'DAY':      ['Day',         None, 'mdi:calendar-today'],
+  'HOUR':     ['Hour',        'h', 'mdi:clock-outline'],
+  'REH':      ['Humidity',    '%', 'mdi:water-percent'],
+  'R03':      ['Rain Prediction 3h',  'mm', 'mdi:water'],
+  'R06H':     ['Rain Prediction 6h',  'mm', 'mdi:water'],
+  'R12H':     ['Rain Prediction 12h', 'mm', 'mdi:water'],
+  'POP':      ['Rain Percent', '%', 'mdi:water-percent'],
+  'S03':      ['Snow Prediction 3h',  'cm', 'mdi:snowflake'],
+  'S06H':     ['Snow Prediction 6h',  'cm', 'mdi:snowflake'],
+  'S12H':     ['Snow Prediction 12h', 'cm', 'mdi:snowflake'],
+  'TEMP':     ['Temperature',     '°C', 'mdi:thermometer'],
+  'TMX':      ['Temperature Max', '°C', 'mdi:thermometer-high'],
+  'TMN':      ['Temperature Min', '°C', 'mdi:thermometer-low'],
+  'WFKOR':    ['Weather Forecast', None, None],
+  'WS':       ['Wind Speed',       'm/s', 'mdi:weather-windy'],
+  'WDKOR':    ['Wind Direction',   None, 'mdi:weather-windy'],
 }
 
 _WEATHER_DAY = {
@@ -54,38 +58,77 @@ FORMAT_CM = '{} cm'
 
 DEFAULT_NAME = 'local_weather_rss'
 DEFAULT_ICON = 'mdi:weather-partlycloudy'
-DEFAULT_TYPE = '3'
+DEFAULT_PROP = False
 
-MIN_TIME_BETWEEN_API_UPDATES    = timedelta(seconds=1800) #
-MIN_TIME_BETWEEN_SENSOR_UPDATES = timedelta(seconds=1800) #
+MIN_TIME_BETWEEN_SENSOR_UPDATES = timedelta(seconds=1800)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Required(CONF_LOCAL_CODE): cv.string,
-    vol.Optional(CONF_TYPE, default=DEFAULT_TYPE): cv.string,
+    vol.Optional(CONF_PROP, default=DEFAULT_PROP): cv.boolean,
 })
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
+
+# For yaml
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     name  = config.get(CONF_NAME)
     local = config.get(CONF_LOCAL_CODE)
-    type  = config.get(CONF_TYPE)
+
+    prop  = config.get(CONF_PROP)
 
     sensors = []
+    child   = []
 
-    rss = RSSWeatherAPI(name, local)
+    rss = RSSWeatherAPI(hass, name, local)
+    await rss.update()
+
+    # 동네예보RSS Properties센서 추가
+    if prop == True:
+        # Weater Properties Sensor Add : _WEATHER_PROPERTIES에 정의된 것만 추가
+        for key, value in rss.result.items():
+            if key in _WEATHER_PROPERTIES:
+                child += [ weatherPropertySensor(local, key, value) ]
+
+        async_add_entities(child, True)
+
 
     rssSensor = rssWeatherSensor( name, rss )
-    rssSensor.update()
 
-    #동네예보RSS 센서 생성
     sensors += [rssSensor]
 
-    # Weater Properties Sensor Add : _WEATHER_PROPERTIES에 정의된 것만 추가
-    for key, value in rssSensor.data.items():
-        if key in _WEATHER_PROPERTIES:
-            sensors += [ weatherPropertySensor(key, value, rss) ]
+    async_add_entities(sensors, True)
 
-    add_entities(sensors, True)
+
+# For UI
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    name  = config_entry.data[CONF_NAME]
+    local = config_entry.data[CONF_LOCAL_CODE]
+
+    prop  = config_entry.data[CONF_PROP]
+
+    sensors = []
+    child   = []
+
+    rss = RSSWeatherAPI(hass, name, local)
+    await rss.update()
+
+    # 동네예보RSS Properties센서 추가
+    if prop == True:
+        # Weater Properties Sensor Add : _WEATHER_PROPERTIES에 정의된 것만 추가
+        for key, value in rss.result.items():
+            if key in _WEATHER_PROPERTIES:
+                child += [ weatherPropertySensor(local, key, value) ]
+
+        async_add_entities(child, True)
+
+
+    #동네예보RSS 센서 생성
+    rssSensor = rssWeatherSensor( name, child, rss )
+
+    sensors += [rssSensor]
+
+    async_add_entities(sensors, True)
+
 
 #WFKOR 또는 WFEN으로 아이콘 가져오기
 def get_icon(wfcode):
@@ -106,14 +149,14 @@ def get_icon(wfcode):
 
 class RSSWeatherAPI:
 
-    def __init__(self, name, local):
+    def __init__(self, hass, name, local):
         """Initialize the RSS Weather API."""
+        self._hass      = hass
         self._name      = name
         self._local     = local
         self.result     = {}
 
-    @Throttle(MIN_TIME_BETWEEN_API_UPDATES)
-    def update(self):
+    async def update(self):
         """Update function for updating api information."""
         try:
             dt = datetime.now()
@@ -121,10 +164,21 @@ class RSSWeatherAPI:
 
             url = KMA_BSE_URL.format(self._local)
 
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
+            #response = requests.get(url, timeout=10)
+            #response.raise_for_status()
 
-            page = response.content.decode('utf-8')
+            #page = response.content.decode('utf8')
+
+            websession = async_get_clientsession(self._hass)
+
+            with async_timeout.timeout(10):
+
+                request = await websession.get(url)
+
+                if request.status != HTTP_OK:
+                    _LOGGER.error( "Error %d on load URL %s", request.status, request.url )
+
+                page = await request.read()
 
             root = xml.etree.ElementTree.fromstring(page)
 
@@ -155,14 +209,14 @@ class RSSWeatherAPI:
                     break
 
                 ATTR_HOUR = element.findtext('hour')
-                ATTR_DAY = element.findtext('day')
+                ATTR_DAY  = element.findtext('day')
                 ATTR_TEMP = element.findtext('temp')
                 ATTR_TMX = element.findtext('tmx')
                 ATTR_TMN = element.findtext('tmn')
                 ATTR_SKY = element.findtext('sky')
                 ATTR_PTY = element.findtext('pty')
                 ATTR_WFKOR = element.findtext('wfKor')
-                ATTR_WFEN = element.findtext('wfEn')
+                ATTR_WFEN  = element.findtext('wfEn')
                 ATTR_POP = element.findtext('pop')
 
                 ATTR_R12 = element.findtext('r12')
@@ -171,7 +225,7 @@ class RSSWeatherAPI:
                 ATTR_WS = element.findtext('ws')
                 ATTR_WD = element.findtext('wd')
                 ATTR_WDKOR = element.findtext('wdKor')
-                ATTR_WDEN = element.findtext('wdEn')
+                ATTR_WDEN  = element.findtext('wdEn')
                 ATTR_REH = element.findtext('reh')
                 ATTR_R06 = element.findtext('r06')
                 ATTR_S06 = element.findtext('s06')
@@ -218,7 +272,7 @@ class RSSWeatherAPI:
                     dictBuf['CATEGORY'] = category
                     dictBuf['PUB_DATE'] = pubDate
 
-		    # -999 인 경우, 이전에 가지고 있던 값을 유지
+                    # -999 인 경우, 이전에 가지고 있던 값을 유지
                     if ATTR_TMX == '-999.0':
                         dictBuf['TMX'] = self.result.get('TMX', ATTR_TMX)
 
@@ -239,22 +293,23 @@ class RSSWeatherAPI:
             raise
 
 class rssWeatherSensor(Entity):
-    def __init__(self, name, api):
+    def __init__(self, name, child, api):
         self._name      = name
         self._api       = api
         self._icon      = DEFAULT_ICON
         self._state     = None
+        self._child     = child
         self.data       = {}
 
     @property
-    def entity_id(self):
+    def unique_id(self):
         """Return the entity ID."""
         return 'sensor.{}'.format(self._name)
 
     @property
     def name(self):
         """Return the name of the sensor, if any."""
-        return '동네예보RSS'
+        return 'Local Weather RSS'
 
     @property
     def icon(self):
@@ -273,15 +328,19 @@ class rssWeatherSensor(Entity):
         return 'Powered by miumida'
 
     @Throttle(MIN_TIME_BETWEEN_SENSOR_UPDATES)
-    def update(self):
+    async def async_update(self):
         """Get the latest state of the sensor."""
         if self._api is None:
             return
 
-        self._api.update()
+        await self._api.update()
+
         rss_dict = self._api.result
 
         self.data = rss_dict
+
+        for sensor in self._child:
+            sensor.set_value( self.data[sensor._name] )
 
     @property
     def device_state_attributes(self):
@@ -310,23 +369,34 @@ class rssWeatherSensor(Entity):
 
         return dict
 
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN,)},
+            "name": '동네예보RSS',
+            "sw_version": SW_VERSION,
+            "manufacturer": MANUFAC,
+            "model": MODEL,
+            "entry_type": "service"
+        }
+
 # 날씨 속성 Sensor
 class weatherPropertySensor(Entity):
     """Representation of a Weather Property Sensor."""
 
-    def __init__(self, name, value, api):
+    def __init__(self, localcode, name, value):
         """Initialize the Weather Property sensor."""
+        self._localcode   = localcode
         self._name        = name
         self._value       = value
 
-        self._state       = None
+        self._state       = value
         self._icon        = None
-        self._api         = api
 
     @property
-    def entity_id(self):
-        """Return the entity ID."""
-        return 'sensor.localweather_rss_{}'.format(self._name.lower())
+    def unique_id(self):
+        """Return the Unique ID."""
+        return 'kma-local-rss-sensor-{}-{}'.format(self._localcode, self._name.lower())
 
     @property
     def name(self):
@@ -353,12 +423,22 @@ class weatherPropertySensor(Entity):
         """Return the unit the value is expressed in."""
         return '' if _WEATHER_PROPERTIES[self._name][1] is None else _WEATHER_PROPERTIES[self._name][1]
 
-    @Throttle(MIN_TIME_BETWEEN_SENSOR_UPDATES)
+    def set_value(self, value):
+        self._state = value
+
+        self.update()
+
     def update(self):
         """Get the latest state of the sensor."""
-        if self._api is None:
-            return
+        self._value = self._state
 
-        self._api.update()
-
-        self._value = self._api.result[self._name]
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN,)},
+            "name": '동네예보RSS',
+            "sw_version": SW_VERSION,
+            "manufacturer": MANUFAC,
+            "model": MODEL,
+            "entry_type": "service"
+        }
