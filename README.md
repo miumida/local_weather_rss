@@ -15,43 +15,66 @@ Local Weather RSS Sensor for Home Assistant<br>
 
 ![screenshot_2](https://github.com/miumida/local_weather_rss/blob/master/local_weather_rss_screenshot_2.png)<br>
 <br><br>
+
+## Version history
+| Version | Date        | 내용              |
+| :-----: | :---------: | ----------------------- |
+| v1.0.0  | 2019.09.19  | First version  |
+| v1.0.1  | 2019.09.30  | - 구름 조금/구름 많이 mdi icon 변경 |
+| v1.1.0  | 2021.02.10  | - 통합구성요소 추가<br>- 일부 아이콘 변경<br>- async 적용<br>- 속성센서 방식 변경 |
+
+<br>
+
 ## Installation
+### Manual
 - HA 설치 경로 아래 custom_components 에 파일을 넣어줍니다.<br>
   `<config directory>/custom_components/local_weather_rss/__init__.py`<br>
   `<config directory>/custom_components/local_weather_rss/manifest.json`<br>
   `<config directory>/custom_components/local_weather_rss/sensor.py`<br>
 - configuration.yaml 파일에 설정을 추가합니다.<br>
 - Home-Assistant 를 재시작합니다<br>
-<br><br>
+### HACS
+- HACS > Integretions > 우측상단 메뉴 > Custom repositories 선택
+- 'https://github.com/miumida/local_weather_rss' 주소 입력, Category에 'integration' 선택 후, 저장
+- HACS > Integretions 메뉴 선택 후, local_weather_rss 검색하여 설치
+
+<br>
+
 ## Usage
 ### configuration
 - HA 설정에 Local Weather RSS sensor를 추가합니다.<br>
 ```yaml
 sensor:
   - platform: local_weather_rss
+    name: local_weather_rss
     localcode: 지역코드
+    properties: False
 ```
-<br><br>
+
+### 기본 설정값
+
+|옵션|내용|
+|--|--|
+|platform| (필수) local_weather_rss  |
+|name| (옵션) default(loca_weather_rss) |
+|localcode| (필수) 원하는 지역 |
+|properties| (옵션) 속성센서 사용여부 |
+
+<br>
+
 ### 지역코드
 - 기상청 RSS 서비스로 접속하여 원하는 지역의 선택하여 지역코드를 찾습니다.<br>
   동네예보에서 지역1,2,3을 선택하고 RSS 버튼을 눌러주면 RSS 주소가 나옵니다.<br>
   RSS 주소(`http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=1159068000`)에 포함된 숫자(**1159068000**)가 지역코드.<br>
 ![kma_rss_service](https://github.com/miumida/local_weather_rss/blob/master/kma_rss_service.png)<br>
-<br><br>
-## History
-##### 2019-09-30 수정사항
-- 구름 조금/구름 많이 mdi icon 변경 ( 0.98.1 이후 버전만 적용필요)<br>mdi:weather-partlycloudy -> mdi:weather-partly-cloudy<br>
-##### 2019-09-19 수정사항
-- 최저/최대 기온 -999.0인 경우, 이전 값 유지하도록 수정<br>
-- 예상적설량 3h/6h/12h 추가(snow_prediction_3h/snow_prediction_6h/snow_prediction_12h)<br>
-- 풍속/풍향 추가(wind_speed/wind_direction)<br>
-- 기타 소소한 수정<br>
-<br><br>
+
+<br>
+
 ## 참조 링크
 [1] 기상청 RSS 서비스 : <https://web.kma.go.kr/weather/lifenindustry/sevice_rss.jsp><br>
 ~~[2] 기상청 동네예보 XML 정보 : <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>~~<br>
 [3] 기상청 동네예보 RSS 정의 : <https://web.kma.go.kr/images/weather/lifenindustry/dongnaeforecast_rss.pdf>
 
-[version-shield]: https://img.shields.io/badge/version-v1.0.1-orange.svg
+[version-shield]: https://img.shields.io/badge/version-v1.1.0-orange.svg
 [hakc-shield]: https://img.shields.io/badge/HAKC-Enjoy-blue.svg
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-red.svg
