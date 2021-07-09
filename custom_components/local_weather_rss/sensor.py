@@ -201,7 +201,7 @@ class RSSWeatherAPI:
             snow_accu_6h  = 0
             snow_accu_12h = 0
 
-            for element in root.getiterator("data"):
+            for element in root.iter("data"):
                 seq = element.attrib['seq']
 
                 # 동네예보 12시간 이내 정보만 사용
