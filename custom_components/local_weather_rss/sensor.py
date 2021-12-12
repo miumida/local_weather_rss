@@ -10,7 +10,7 @@ import homeassistant.helpers.config_validation as cv
 from datetime import timedelta
 from datetime import datetime
 from homeassistant.components.sensor import PLATFORM_SCHEMA
-from homeassistant.const import (CONF_NAME, HTTP_OK)
+from homeassistant.const import (CONF_NAME)
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import Throttle
@@ -175,7 +175,7 @@ class RSSWeatherAPI:
 
                 request = await websession.get(url)
 
-                if request.status != HTTP_OK:
+                if request.status != 200:
                     _LOGGER.error( "Error %d on load URL %s", request.status, request.url )
 
                 page = await request.read()
