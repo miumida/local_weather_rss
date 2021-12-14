@@ -24,6 +24,7 @@ Local Weather RSS Sensor for Home Assistant<br>
 | v1.1.1  | 2021.03.05  | manifest.json 파일 version 정보  |
 | v1.1.2  | 2021.07.10  | iterator() -> iter() 변경  |
 | v1.1.3  | 2021.12.12  | 2021.12.0 HTTP_OK fix  |
+| v1.1.4  | 2021.12.15  | 2021.12.0 Fixed bug  |
 
 <br>
 
@@ -77,6 +78,6 @@ sensor:
 ~~[2] 기상청 동네예보 XML 정보 : <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>~~<br>
 [3] 기상청 동네예보 RSS 정의 : <https://web.kma.go.kr/images/weather/lifenindustry/dongnaeforecast_rss.pdf>
 
-[version-shield]: https://img.shields.io/badge/version-v1.1.3-orange.svg
+[version-shield]: https://img.shields.io/badge/version-v1.1.4-orange.svg
 [hakc-shield]: https://img.shields.io/badge/HAKC-Enjoy-blue.svg
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-red.svg
