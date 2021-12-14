@@ -343,7 +343,7 @@ class rssWeatherSensor(Entity):
             sensor.set_value( self.data[sensor._name] )
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Attributes."""
 
         dict = { 'public_date': self.data['PUB_DATE']
@@ -377,7 +377,7 @@ class rssWeatherSensor(Entity):
             "sw_version": SW_VERSION,
             "manufacturer": MANUFAC,
             "model": MODEL,
-            "entry_type": "service"
+            "DeviceEntryType": "service"
         }
 
 # 날씨 속성 Sensor
@@ -440,5 +440,5 @@ class weatherPropertySensor(Entity):
             "sw_version": SW_VERSION,
             "manufacturer": MANUFAC,
             "model": MODEL,
-            "entry_type": "service"
+            "DeviceEntryType": "service"
         }
