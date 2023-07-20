@@ -2,7 +2,7 @@
 
 ![HAKC][hakc-shield]
 ![HACS][hacs-shield]
-![Version v1.1.3][version-shield]
+![Version v1.1.5][version-shield]
 
 Local Weather RSS Sensor for Home Assistant<br>
 기상청 동네예보 RSS를 활용한 Home Assistant Sensor 입니다.<br>
@@ -25,6 +25,8 @@ Local Weather RSS Sensor for Home Assistant<br>
 | v1.1.2  | 2021.07.10  | iterator() -> iter() 변경  |
 | v1.1.3  | 2021.12.12  | 2021.12.0 HTTP_OK fix  |
 | v1.1.4  | 2021.12.15  | 2021.12.0 Fixed bug  |
+| v1.1.5  | 2023.07.20  | Fixed bug |
+
 
 <br>
 
@@ -78,6 +80,6 @@ sensor:
 ~~[2] 기상청 동네예보 XML 정보 : <http://www.kma.go.kr/images/weather/lifenindustry/timeseries_XML.pdf>~~<br>
 [3] 기상청 동네예보 RSS 정의 : <https://web.kma.go.kr/images/weather/lifenindustry/dongnaeforecast_rss.pdf>
 
-[version-shield]: https://img.shields.io/badge/version-v1.1.4-orange.svg
+[version-shield]: https://img.shields.io/badge/version-v1.1.5-orange.svg
 [hakc-shield]: https://img.shields.io/badge/HAKC-Enjoy-blue.svg
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-red.svg
