@@ -2,6 +2,6 @@
 DOMAIN   = "local_weather_rss"
 PLATFORM = "sensor"
 
-SW_VERSION = "1.1.5"
+SW_VERSION = "1.1.6"
 MODEL   = "동네예보RSS"
 MANUFAC = "기상청"
