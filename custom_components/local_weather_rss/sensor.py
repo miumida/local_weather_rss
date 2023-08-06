@@ -440,5 +440,4 @@ class weatherPropertySensor(Entity):
             "sw_version": SW_VERSION,
             "manufacturer": MANUFAC,
             "model": MODEL,
-            "DeviceEntryType": "service"
         }
