@@ -377,7 +377,6 @@ class rssWeatherSensor(Entity):
             "sw_version": SW_VERSION,
             "manufacturer": MANUFAC,
             "model": MODEL,
-            "DeviceEntryType": "service"
         }
 
 # 날씨 속성 Sensor
