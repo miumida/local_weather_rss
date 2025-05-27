@@ -4,6 +4,8 @@
 ![HACS][hacs-shield]
 ![Version v1.1.8][version-shield]
 
+기상청 RSS 서비스 종료(2025.02)로 정상동작 하지 않습니다.<br>
+
 Local Weather RSS Sensor for Home Assistant<br>
 기상청 동네예보 RSS를 활용한 Home Assistant Sensor 입니다.<br>
 - 동네예보RSS와 동네예보RSS속성, 두가지 형태의 센서를 생성합니다.<br>
