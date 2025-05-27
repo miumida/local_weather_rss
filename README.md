@@ -2,7 +2,7 @@
 
 ![HAKC][hakc-shield]
 ![HACS][hacs-shield]
-![Version v1.1.7][version-shield]
+![Version v1.1.8][version-shield]
 
 Local Weather RSS Sensor for Home Assistant<br>
 기상청 동네예보 RSS를 활용한 Home Assistant Sensor 입니다.<br>
